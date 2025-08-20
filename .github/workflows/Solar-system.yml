@@ -9,32 +9,20 @@ on:
 
 jobs:
   unit-testing:
-    name: Unit Testing
     runs-on: ubuntu-latest
     services:
       mongo:
         image: mongo:6.0
         ports:
           - 27017:27017
-        options: --bind_ip_all
-
-    steps: 
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Setup NodeJS version
-        uses: actions/setup-node@v3
-        with: 
-          node-version: 18
-      
-      - name: Install dependencies
-        run: npm install
-
-      - name: Set environment variables
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set env
         run: |
           echo "MONGO_URI=mongodb://localhost:27017/superData" >> $GITHUB_ENV
           echo "MONGO_USERNAME=anyuser" >> $GITHUB_ENV
           echo "MONGO_PASSWORD=anypassword" >> $GITHUB_ENV
-
-      - name: Unit testing 
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
         run: npm test

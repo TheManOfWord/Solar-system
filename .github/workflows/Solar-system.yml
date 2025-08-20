@@ -7,22 +7,28 @@ on:
       - main
       - feature/*
 
+# Workflow-level environment variables
+env:
+  MONGO_URI: 'mongodb://localhost:27017/superData'
+  MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
+  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+
 jobs:
   unit-testing:
+    name: Unit Testing
     runs-on: ubuntu-latest
-    services:
-      mongo:
-        image: mongo:6.0
-        ports:
-          - 27017:27017
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Set env
-        run: |
-          echo "MONGO_URI=mongodb://localhost:27017/superData" >> $GITHUB_ENV
-          echo "MONGO_USERNAME=anyuser" >> $GITHUB_ENV
-          echo "MONGO_PASSWORD=anypassword" >> $GITHUB_ENV
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Install dependencies
         run: npm install
-      - name: Run tests
+
+      - name: Unit testing
         run: npm test

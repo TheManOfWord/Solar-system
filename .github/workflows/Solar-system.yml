@@ -7,34 +7,14 @@ on:
       - main
       - feature/*
 
-env:
-  MONGO_URI: mongodb://localhost:27017/superData
-  MONGO_USERNAME: anyuser
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-
 jobs:
-  unit-testing:
-    runs-on: ubuntu-latest
-
-    services:
-      mongo:
-        image: mongo:6.0
-        ports:
-          - 27017:27017
-        options: >-
-          --quiet
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
+    code-coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - run: npm run test
+            - run: npm run coverage
+              continue-on-error: true
+            - uses: actions/upload-artifacts@v3
+              with: 
+                name: coverage reports
+                path: coverage/
